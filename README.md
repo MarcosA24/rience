@@ -1,7 +1,6 @@
 # rience
-personal projects in python
+Repository with Personal projects in python
 
-** for pip installations, in case pip install <module> doesn't work, do >. py -3 -m pip install <module>
 ### EDIMA
 folder containing scripts that can edit images using python.
 The main program is the **GUI_Imagery.py**
@@ -17,3 +16,4 @@ Image edition libraries used:
   - PIL &emsp; &emsp; &emsp; &emsp;  *pip install PIL*
 
   
+**for pip installations, in case pip install <module> doesn't work, do >. py -3 -m pip install <module>**
