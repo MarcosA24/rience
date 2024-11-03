@@ -3,12 +3,11 @@ import sys, os, pyperclip
 import matplotlib.pyplot as plt
 from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QMainWindow, QPushButton, QSpinBox, QVBoxLayout, QWidget, QFileDialog, QLabel, QListWidget,
                             QErrorMessage, QLineEdit, QSlider, QTabBar, QTabWidget, QCheckBox,QComboBox, QGridLayout, QRadioButton)
-from PyQt6.QtGui import QImage, QPixmap
+from PyQt6.QtGui import QImage, QPixmap, QPainter, QPen, QColor
 from PyQt6.QtCore import Qt
 import cv2
 import numpy as np
 from PIL import Image, ImageQt
-
 
 class ImageWidget(QLabel):
     def __init__(self,parent=None):
@@ -67,7 +66,6 @@ def get_image_mask(img, blue_shade, diff): #apply the tracing process
     return cv2.cvtColor(mask, cv2.COLOR_BGR2RGB), percent_traced
 
 def click_ev(ev,x,y,flags,param):
-    cut= art.copy()
     if ev == cv2.EVENT_LBUTTONDOWN:
         print(x,' ',y)
         cv2.circle(cut, (x,y), radius=2, color=(0, 0, 255), thickness=4)
@@ -120,6 +118,7 @@ class MainWindow(QMainWindow):
         self.escalated_image_data= None
         self.enhanced_image_data= None
         self.advEdited_image_data= None
+        self.temp_image_data= None
         #list of the result images, for combining purposes. And the boxes that will enable to combine effects
         self.result_images_list= [self.traced_image_data,self.enhanced_image_data,self.advEdited_image_data]
     
@@ -268,6 +267,48 @@ class MainWindow(QMainWindow):
             
             tabs.addTab(advEd_pane,'Editions')
         tab4(self)
+        
+        def tab5(self):
+            visual_pane = QWidget(self)
+            visual_param= QGridLayout()
+            visual_pane.setLayout(visual_param)
+            
+            self.gridShow= QCheckBox('Show Grid')
+            self.gridShow.setMaximumWidth(80)
+            self.gridPrint= QPushButton('Print Grid')
+            self.gridPrint.clicked.connect(self.grid_print)
+            self.gridSize= QSpinBox()
+            self.gridSize.setSuffix(' px'), self.gridSize.setMinimum(10), self.gridSize.setMaximum(100),self.gridSize.setValue(32), self.gridSize.setFixedWidth(80)
+            self.gridSize.valueChanged.connect(self.visualFunctions)            
+            self.infoGet= QCheckBox('Click Information')        
+            self.infoGet.setChecked(False)
+            self.infoList= QComboBox()
+            self.infos= ["RGB code","ND","Position"]
+            self.infoList.addItems(self.infos)
+            self.infoList.setFixedWidth(200), self.advanced.setFixedHeight(30)
+            
+            self.infoList.currentIndexChanged.connect(self.visualFunctions)
+            self.paint= QCheckBox('Enable Painting')        
+            self.paint.setChecked(False)
+            self.paintType= QComboBox()
+            self.forms= ["Square","Rectangle","Circle","Elipsis"]
+            self.paintType.addItems(self.forms)
+            self.paintType.setFixedWidth(200), self.paintType.setFixedHeight(30)
+            self.paintType.currentIndexChanged.connect(self.visualFunctions)
+            
+            visual_param.addWidget(self.gridShow,0,0)
+            visual_param.addWidget(QLabel('Pixel Size: '),1,0)
+            visual_param.addWidget(self.gridPrint,0,1)
+            visual_param.addWidget(self.gridSize,1,1)
+            
+            visual_param.addWidget(self.infoGet,0,2)
+            visual_param.addWidget(self.infoList,1,2)
+            visual_param.addWidget(self.paint,0,3)
+            visual_param.addWidget(self.paintType,1,3)
+            
+            tabs.addTab(visual_pane,'Visualize')
+        tab5(self)
+        
         right_layout.addWidget(tabs)
         
         #Right processed Image. It depends on the checkboxes if the tabs affect it or not.
@@ -292,10 +333,12 @@ class MainWindow(QMainWindow):
         self.save_button.clicked.connect(self.recorder) #connects to the saving function
         self.save_button.setFixedWidth(100)
         self.result_image_shape= QLabel()
+        self.grid_lines= QLabel()
         self.percent_traced_label= QLabel()
         
         right_bottom.addWidget(self.result_image_shape,0,0)
-        right_bottom.addWidget(self.percent_traced_label,0,2)
+        right_bottom.addWidget(self.grid_lines,0,2)
+        right_bottom.addWidget(self.percent_traced_label,0,3)
         right_bottom.addWidget(self.save_button,2,4)
         right_layout.addLayout(right_bottom)
     
@@ -327,7 +370,7 @@ class MainWindow(QMainWindow):
                     error_dialog.showMessage('Image Path not valid.')
                     error_dialog.exec()
             else:
-                origin_path= QFileDialog.getOpenFileName()[0] #windows File explorer
+                origin_path, ok= QFileDialog.getOpenFileName(self,"Select image" ,R"C:\Users\user\Pictures","Images( *.jpeg , *.jpg , *png);; Web( *.webp , *.jfif)") #windows File explorer
                 if os.path.exists(origin_path): self.source_file= origin_path
                 else:
                     error_dialog= QErrorMessage()
@@ -370,6 +413,7 @@ class MainWindow(QMainWindow):
             self.advEd_specs.addWidget(QLabel('Pixel Size'))
             self.advEd_specs.addWidget(self.pixel,alignment=Qt.AlignmentFlag.AlignLeft)
         else: clearLayout(self.advEd_specs)
+    
     ##>> IMAGE EDITION MAIN FUNCTIONS >>----------------------------
     #>. RGB Mask
     def tracing_image(self):
@@ -496,9 +540,44 @@ class MainWindow(QMainWindow):
                 self.advEdited_image_data= cv_image_from_PIL_image(px)
                 self.result_image.setPixmap(QPixmap.fromImage(ImageQt.ImageQt(px)))        #solve the problem of not showing in pixmap
                 #for now, it return the data in the saved image, but does not show it in the GUI result_image
+    
+    #>.Visual Tab functions. Don't affect the final result, it's only to visualize in the GUI: showGrid, click Info(RGB, ND,...), visualPainting
+    def visualFunctions(self):
+        if self.check_source() is True:    
+            temporal= pixmap_from_cv_image(self.source_image_cv)      #define the image to be painted (do a function to use the result or the original image)
+            qp, pen= QPainter(temporal), QPen()                       #define the pen properties to draw in the Pixmap
+            pen.setColor(QColor("gray")), pen.setWidth(1)           #tutorial: https://www.pythonguis.com/tutorials/bitmap-graphics/
+            qp.setPen(pen)
+            if self.gridShow.isChecked():
+                gridSize= self.gridSize.value()
+                rows,cols= int(temporal.height()/gridSize), int(temporal.width()/gridSize)
+                grlines= max(rows,cols)
+                x,y = 0, 0
+                for r in range(grlines):
+                    qp.drawLine(0, y, temporal.width(), y)      #draw the rows
+                    qp.drawLine(x, 0, x, temporal.height())      #draw the cols
+                    y+= gridSize
+                    x+= gridSize
+                self.result_image_shape.setText(f'Grid Lines: {rows} rows, {cols} cols')
+            if self.infoGet.isChecked():
+                info= self.infoList.currentText()
                 
+            if self.paint.isChecked():
+                geom= self.paintType.currentText()
+            
+            qp.end()
+            self.result_image.setPixmap(temporal)
+            self.temp_image_data= temporal
+            
+        
     ###>> SAVING THE RESULTS    >>----------------------------
     #>.#combine various effects to get the mixed final image
+    def grid_print(self):
+        out_file = QFileDialog.getSaveFileName(self,"Select image" ,R"C:\Users\user\Pictures","Images( *.png , *.jpeg , *.jpg);; Web( *.jfif, *.webp)")[0]
+        out_name= out_file.split('.')
+        print(out_name)
+        self.temp_image_data.save(out_file,out_name[1])
+        
     def combiner(self): 
         final_image= self.source_image_cv
         for chbox in [self.tracing_box,self.enhancing_box,self.advEd_box,self.scaling_box]:
@@ -518,8 +597,8 @@ class MainWindow(QMainWindow):
             error_dialog.showMessage('No image processed. Please check one of the boxes on the left')
             error_dialog.exec()
         else:
-            out_file = QFileDialog.getSaveFileName(self, 'Save File')[0]
-            if len(out_file) > 0: cv2.imwrite(out_file+'.png', self.result_image_data)
+            out_file = QFileDialog.getSaveFileName(self,"Select image" ,R"C:\Users\user\Pictures","Images( *.jpeg , *.jpg , *.png);; Web( *.webp , *.jfif)"," *.png")[0]
+            if len(out_file) > 0: cv2.imwrite(out_file, self.result_image_data)
 
 if __name__=='__main__':
     app = QApplication(sys.argv)
