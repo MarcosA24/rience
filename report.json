@@ -1,0 +1,172 @@
+{
+    "bad pose time": 0,
+    "block num": 1,
+    "colorize time": 50580,
+    "contour generation": {
+        "generate contour": false
+    },
+    "dem generation": {
+        "dem resolution": 0.5,
+        "generate dem": true
+    },
+    "dem generation time": 12865,
+    "fc pose process time": 50680,
+    "flight param": [
+        {
+            "field angle": [
+                70,
+                75
+            ],
+            "flight end time": 1739527054.392167,
+            "flight start time": 1739526392.213629,
+            "gnss name": "gnss name",
+            "gnss sn": "gnss sn",
+            "ground beam size": [
+                32,
+                10
+            ],
+            "height to ground": 27.393413543701172,
+            "imu name": "imu name",
+            "imu sn": "imu sn",
+            "lidar name": "L2",
+            "lidar sn": "6U3DM4A0055W7J",
+            "param between lidar and imu before optimize": {
+                "relative angle pitch": 3.1397173404693604,
+                "relative angle roll": 0.005495594348758459,
+                "relative angle yaw": 3.1414499282836914,
+                "relative distance X": 0.026669999584555626,
+                "relative distance Y": 0.014499999582767487,
+                "relative distance Z": -0.046150002628564835
+            },
+            "pulse rate": 240,
+            "rtk observe interval": 0.2,
+            "rtk receive freq": 5,
+            "scan modes": 1,
+            "scan rate": 1200,
+            "speed over ground": 3.5791468620300293,
+            "uav name": "DJI M300 RTK",
+            "uav sn": "uav sn"
+        }
+    ],
+    "generate b3dm": true,
+    "generate contour dxf": false,
+    "generate contour shp": false,
+    "generate dem tif": true,
+    "generate i3s": false,
+    "generate las": true,
+    "generate obj": true,
+    "generate osgb": false,
+    "generate pcd": false,
+    "generate ply": true,
+    "generate pnts": true,
+    "generate point ply": false,
+    "generate point s3mb": false,
+    "generate s3mb": false,
+    "generate xml": false,
+    "georef time": 57900,
+    "good pose time": 662178,
+    "gps corner": {
+        "bottom right lat": 41.61846227070754,
+        "bottom right lon": 1.5793489379064398,
+        "top left lat": 41.6233500929633,
+        "top left lon": 1.5736508643554388
+    },
+    "ground classification time": 119539,
+    "ground extraction": {
+        "do ground extraction": true,
+        "iterator angle": 6.0,
+        "iterator angle str": "6",
+        "iterator distance": 0.5,
+        "iterator distance str": "0.5",
+        "max building size": 20.0,
+        "max building size str": "20",
+        "scene type": 1
+    },
+    "hardware information": {
+        "cpu model": "Intel 12th Gen Intel(R) Core(TM) i9-12950HX 24 cores",
+        "gpu names": [
+            "NVIDIA RTX A2000 8GB Laptop GPU"
+        ],
+        "gpu num": 1,
+        "total ram": 65220
+    },
+    "imu traj error": {
+        "traj d average": 0.006636858545687855,
+        "traj d rmse": 9.524984718826973e-05,
+        "traj e average": 0.0056115686136080836,
+        "traj e rmse": 9.083136041464597e-05,
+        "traj n average": 0.0051212710696696435,
+        "traj n rmse": 7.314239499410985e-05,
+        "traj pitch average": 6.412989989883283e-05,
+        "traj pitch rmse": 1.6639639438666033e-06,
+        "traj roll average": 6.382322543342392e-05,
+        "traj roll rmse": 2.0775846165878353e-06,
+        "traj yaw average": 0.00025771477341954117,
+        "traj yaw rmse": 4.618610085808715e-05
+    },
+    "isGeographic": false,
+    "lidar point max distance": 300.0,
+    "lidar point max distance str": "300",
+    "lidar point min distance": 3.0,
+    "lidar point optimize": true,
+    "lpp time": 840806,
+    "map tile": {
+        "maximum level": 23,
+        "minimum level": 12
+    },
+    "maps 2d generation": {
+        "TDOM GSD": 0.0084,
+        "covered area": 0.024608133741491678,
+        "dom tile size": 0,
+        "generate maps 2d": true,
+        "resolution level": 1,
+        "use Dehaze": false,
+        "use Wallis": false
+    },
+    "maps 2d time": 4857787,
+    "merge point": false,
+    "mesh generation time": 11203651,
+    "model simplify": 0.5,
+    "output coordinate": "WGS 84 / UTM zone 31N",
+    "output vertical coordinate": "EGM2008_Geoid",
+    "pc smoothing time": 583915,
+    "point cloud collection time": 553899,
+    "point cloud density": {
+        "average density": 653.9443969726563,
+        "scale 1 to 1000": {
+            "density standard": 4.0,
+            "grid size": 0.5,
+            "proportion not satisfied": 0.007246376946568489,
+            "total grid num": 130548.0
+        },
+        "scale 1 to 2000": {
+            "density standard": 1.0,
+            "grid size": 1.0,
+            "proportion not satisfied": 0.011119863949716091,
+            "total grid num": 33004.0
+        },
+        "scale 1 to 500": {
+            "density standard": 16.0,
+            "grid size": 0.25,
+            "proportion not satisfied": 0.006770728621631861,
+            "total grid num": 518408.0
+        }
+    },
+    "pos status": {
+        "fixed solution": 1.0,
+        "other solution": 0.0
+    },
+    "pose data collection time": 662178,
+    "process point cloud other time": 1760416,
+    "quality level": 1,
+    "quality level mesh": 1,
+    "sample distance": 0.10000000149011612,
+    "save preprocess results time": 0,
+    "save result time": 49455,
+    "scene mode": 0,
+    "smooth point": true,
+    "total pc optimize time": 3285172,
+    "total process time": 19479014,
+    "total uav process time": 662178,
+    "use lidar base station": false
+}
